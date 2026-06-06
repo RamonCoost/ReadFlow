@@ -1,7 +1,7 @@
 package io.github.ramon.ReadFlow.business.mapper;
 
-import io.github.ramon.ReadFlow.business.dto.LivroRequest;
-import io.github.ramon.ReadFlow.business.dto.LivroResponse;
+import io.github.ramon.ReadFlow.business.dto.request.LivroRequest;
+import io.github.ramon.ReadFlow.business.dto.response.LivroResponse;
 import io.github.ramon.ReadFlow.infrastructure.entity.Livro;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
