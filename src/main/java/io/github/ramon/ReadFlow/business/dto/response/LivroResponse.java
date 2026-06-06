@@ -1,4 +1,4 @@
-package io.github.ramon.ReadFlow.business.dto;
+package io.github.ramon.ReadFlow.business.dto.response;
 
 import io.github.ramon.ReadFlow.infrastructure.enums.Status;
 

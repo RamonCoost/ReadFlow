@@ -1,8 +1,8 @@
 package io.github.ramon.ReadFlow.business.service;
 
-import io.github.ramon.ReadFlow.business.dto.AtualizaProgressoRequest;
-import io.github.ramon.ReadFlow.business.dto.LivroRequest;
-import io.github.ramon.ReadFlow.business.dto.LivroResponse;
+import io.github.ramon.ReadFlow.business.dto.request.AtualizaProgressoRequest;
+import io.github.ramon.ReadFlow.business.dto.request.LivroRequest;
+import io.github.ramon.ReadFlow.business.dto.response.LivroResponse;
 import io.github.ramon.ReadFlow.business.mapper.LivroMapper;
 import io.github.ramon.ReadFlow.infrastructure.entity.Livro;
 import io.github.ramon.ReadFlow.infrastructure.enums.Status;
@@ -26,9 +26,16 @@ public class LivroService {
         if (livroRequest.paginasLidas() > livroRequest.totalPaginas()) {
             throw new BadRequestException("Páginas lidas não podem ser maiores que o total de páginas do livro.");
         }
-        return mapper.paraLivroResponse(
-                repository.save(mapper.paraLivro(livroRequest))
-        );
+
+        Status status = calcualarStatusLeitura(
+                livroRequest.paginasLidas(),
+                livroRequest.totalPaginas());
+
+        Livro livro = mapper.paraLivro(livroRequest);
+
+        livro.setStatusLeitura(status);
+
+        return mapper.paraLivroResponse(repository.save(livro));
     }
 
     public List<LivroResponse> listarLivros() {
@@ -45,18 +52,19 @@ public class LivroService {
         return mapper.paraLivroResponseList(repository.findByAutor(autor));
     }
 
-    public LivroResponse atualizarProgressoLeitura(long id, AtualizaProgressoRequest request) {
+    public LivroResponse atualizarProgressoLeitura(long id, AtualizaProgressoRequest atualizaRequest) {
         Livro livro = buscarLivroEntityPorId(id);
 
-        if (request.paginasLidas() > livro.getTotalPaginas()){
+        if (atualizaRequest.paginasLidas() > livro.getTotalPaginas()) {
             throw new BadRequestException("Páginas lidas não podem ser maiores que o total de páginas do livro.");
         }
 
-        livro.setPaginasLidas(request.paginasLidas());
+        livro.setPaginasLidas(atualizaRequest.paginasLidas());
 
-        if(livro.getPaginasLidas() == livro.getTotalPaginas()){
-            livro.setStatusLeitura(Status.CONCLUIDO);
-        }
+        Status status = calcualarStatusLeitura(livro.getPaginasLidas(), livro.getTotalPaginas());
+
+        livro.setStatusLeitura(status);
+
 
         return mapper.paraLivroResponse(repository.save(livro));
     }
@@ -77,5 +85,17 @@ public class LivroService {
     private Livro buscarLivroEntityPorId(Long id) {
         return repository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Livro não encontrado, verifique o id do livro."));
+    }
+
+    private Status calcualarStatusLeitura(int paginasLidas, int totalPaginas) {
+        if (paginasLidas == totalPaginas) {
+            return Status.CONCLUIDO;
+        }
+
+        if (paginasLidas == 0) {
+            return Status.QUERO_LER;
+        }
+
+        return Status.LENDO;
     }
 }
