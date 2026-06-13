@@ -5,7 +5,6 @@ import io.github.ramon.ReadFlow.business.dto.request.AtualizaStatusRequest;
 import io.github.ramon.ReadFlow.business.dto.request.LivroRequest;
 import io.github.ramon.ReadFlow.business.dto.response.LivroResponse;
 import io.github.ramon.ReadFlow.business.service.LivroService;
-import io.github.ramon.ReadFlow.infrastructure.enums.Status;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
