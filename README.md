@@ -32,8 +32,8 @@ Também é possível atualizar manualmente o status para:
 * Spring Data JPA
 * Validation
 * Lombok
-* H2 Database
-* Maven
+* PostgreSQL
+* Gradle
 
 ## 📌 Endpoints principais
 
@@ -84,7 +84,7 @@ cd ReadFlow
 Execute o projeto:
 
 ```bash
-./mvnw spring-boot:run
+./gradlew bootRun
 ```
 
 A aplicação estará disponível em:
