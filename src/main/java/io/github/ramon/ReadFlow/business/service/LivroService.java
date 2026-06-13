@@ -49,7 +49,7 @@ public class LivroService {
     }
 
     public List<LivroResponse> buscarLivroPorAutor(String autor) {
-        return mapper.paraLivroResponseList(repository.findByAutor(autor));
+        return mapper.paraLivroResponseList(repository.findByAutorContainingIgnoreCase(autor));
     }
 
     public LivroResponse atualizarProgressoLeitura(long id, AtualizaProgressoRequest atualizaRequest) {
