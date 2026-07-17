@@ -27,13 +27,17 @@ public class LivroService {
             throw new BadRequestException("Páginas lidas não podem ser maiores que o total de páginas do livro.");
         }
 
-        Status status = calcualarStatusLeitura(
+        Status status = calcularStatusLeitura(
                 livroRequest.paginasLidas(),
                 livroRequest.totalPaginas());
 
         Livro livro = mapper.paraLivro(livroRequest);
 
+        livro.setTitulo(normalizarTexto(livro.getTitulo()));
+        livro.setAutor(normalizarTexto(livro.getAutor()));
+
         livro.setStatusLeitura(status);
+
 
         return mapper.paraLivroResponse(repository.save(livro));
     }
@@ -61,7 +65,7 @@ public class LivroService {
 
         livro.setPaginasLidas(atualizaRequest.paginasLidas());
 
-        Status status = calcualarStatusLeitura(livro.getPaginasLidas(), livro.getTotalPaginas());
+        Status status = calcularStatusLeitura(livro.getPaginasLidas(), livro.getTotalPaginas());
 
         livro.setStatusLeitura(status);
 
@@ -87,7 +91,7 @@ public class LivroService {
                 () -> new ResourceNotFoundException("Livro não encontrado, verifique o id do livro."));
     }
 
-    private Status calcualarStatusLeitura(int paginasLidas, int totalPaginas) {
+    private Status calcularStatusLeitura(int paginasLidas, int totalPaginas) {
         if (paginasLidas == totalPaginas) {
             return Status.CONCLUIDO;
         }
@@ -98,4 +102,16 @@ public class LivroService {
 
         return Status.LENDO;
     }
+
+    private String normalizarTexto(String texto) {
+        String[] palavrasDoTexto = texto.trim().split("\\s+");
+        StringBuilder textoNormalizado = new StringBuilder();
+        for (String palavra : palavrasDoTexto) {
+            textoNormalizado.append(Character.toUpperCase(palavra.charAt(0)));
+            textoNormalizado.append(palavra.substring(1).toLowerCase());
+            textoNormalizado.append(" ");
+        }
+        return textoNormalizado.toString().trim();
+    }
+
 }
