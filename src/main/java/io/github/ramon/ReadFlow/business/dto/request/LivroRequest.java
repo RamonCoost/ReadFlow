@@ -16,4 +16,5 @@ public record LivroRequest(@NotBlank
 
                            @PositiveOrZero
                            int paginasLidas) {
+
 }
