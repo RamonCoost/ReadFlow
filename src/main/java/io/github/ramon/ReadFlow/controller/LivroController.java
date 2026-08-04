@@ -1,5 +1,6 @@
 package io.github.ramon.ReadFlow.controller;
 
+import io.github.ramon.ReadFlow.business.dto.request.AtualizaLivroRequest;
 import io.github.ramon.ReadFlow.business.dto.request.AtualizaProgressoRequest;
 import io.github.ramon.ReadFlow.business.dto.request.AtualizaStatusRequest;
 import io.github.ramon.ReadFlow.business.dto.request.LivroRequest;
@@ -37,6 +38,11 @@ public class LivroController {
     @GetMapping("/autor")
     public ResponseEntity<List<LivroResponse>> buscarLivroPorAutor(@RequestParam String autor) {
         return ResponseEntity.ok(service.buscarLivroPorAutor(autor));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<LivroResponse> atualizarLivro(@PathVariable Long id, @Valid @RequestBody AtualizaLivroRequest livroRequest){
+        return ResponseEntity.ok(service.atualizarLivro(id, livroRequest));
     }
 
     @PutMapping("/{id}/progresso")
