@@ -1,5 +1,6 @@
 package io.github.ramon.ReadFlow.business.service;
 
+import io.github.ramon.ReadFlow.business.dto.request.AtualizaLivroRequest;
 import io.github.ramon.ReadFlow.business.dto.request.AtualizaProgressoRequest;
 import io.github.ramon.ReadFlow.business.dto.request.LivroRequest;
 import io.github.ramon.ReadFlow.business.dto.response.LivroResponse;
@@ -54,6 +55,32 @@ public class LivroService {
 
     public List<LivroResponse> buscarLivroPorAutor(String autor) {
         return mapper.paraLivroResponseList(repository.findByAutorContainingIgnoreCase(autor));
+    }
+
+    public LivroResponse atualizarLivro(long id, AtualizaLivroRequest atualizaLivroRequest) {
+        Livro livro = buscarLivroEntityPorId(id);
+
+        if (atualizaLivroRequest.paginasLidas() > atualizaLivroRequest.totalPaginas()) {
+            throw new BadRequestException("Páginas lidas não podem ser maiores que o total de páginas do livro.");
+        }
+
+        livro.setTitulo(normalizarTexto(atualizaLivroRequest.titulo()));
+
+        livro.setAutor(normalizarTexto(atualizaLivroRequest.autor()));
+
+        livro.setTotalPaginas(atualizaLivroRequest.totalPaginas());
+
+        livro.setPaginasLidas(atualizaLivroRequest.paginasLidas());
+
+        if (atualizaLivroRequest.abandonado()) {
+            livro.setStatusLeitura(Status.ABANDONEI);
+        } else {
+            Status status = calcularStatusLeitura(atualizaLivroRequest.paginasLidas(), atualizaLivroRequest.totalPaginas());
+            livro.setStatusLeitura(status);
+        }
+
+        return mapper.paraLivroResponse(repository.save(livro));
+
     }
 
     public LivroResponse atualizarProgressoLeitura(long id, AtualizaProgressoRequest atualizaRequest) {
