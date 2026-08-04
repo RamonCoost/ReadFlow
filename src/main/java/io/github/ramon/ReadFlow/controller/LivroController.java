@@ -45,16 +45,6 @@ public class LivroController {
         return ResponseEntity.ok(service.atualizarLivro(id, livroRequest));
     }
 
-    @PutMapping("/{id}/progresso")
-    public ResponseEntity<LivroResponse> atualizarProgressoDeLeitura(@PathVariable Long id, @Valid @RequestBody AtualizaProgressoRequest request) {
-        return ResponseEntity.ok(service.atualizarProgressoLeitura(id, request));
-    }
-
-    @PutMapping("/{id}/status")
-    public ResponseEntity<LivroResponse> atualizarStatusDeLeitura(@PathVariable Long id, @Valid @RequestBody AtualizaStatusRequest status) {
-        return ResponseEntity.ok(service.atualizarStatus(id, status.statusLeitura()));
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<LivroResponse> excluirLivro(@PathVariable Long id) {
         service.deletarLivro(id);
