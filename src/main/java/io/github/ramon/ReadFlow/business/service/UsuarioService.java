@@ -1,0 +1,69 @@
+package io.github.ramon.ReadFlow.business.service;
+
+import io.github.ramon.ReadFlow.business.dto.usuario.request.AtualizarUsuarioRequest;
+import io.github.ramon.ReadFlow.business.dto.usuario.request.CadastroUsuarioRequest;
+import io.github.ramon.ReadFlow.business.dto.usuario.response.UsuarioResponse;
+import io.github.ramon.ReadFlow.business.mapper.UsuarioMapper;
+import io.github.ramon.ReadFlow.infrastructure.entity.Usuario;
+import io.github.ramon.ReadFlow.infrastructure.exceptions.ConflictException;
+import io.github.ramon.ReadFlow.infrastructure.exceptions.ResourceNotFoundException;
+import io.github.ramon.ReadFlow.infrastructure.repository.UsuarioRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class UsuarioService {
+
+    private final UsuarioRepository repository;
+    private final UsuarioMapper mapper;
+
+    public UsuarioResponse salvarUsuario(CadastroUsuarioRequest cadastroUsuarioRequest) {
+
+        Usuario usuario = mapper.paraUsuario(cadastroUsuarioRequest);
+        usuario.setNome(normalizarTexto(usuario.getNome()));
+        usuario.setEmail(normalizarEmail(usuario.getEmail()));
+
+        if (repository.existsByEmail(usuario.getEmail())) {
+            throw new ConflictException("Esse email já esta cadastrado");
+        }
+
+        return mapper.paraUsuarioResponse(repository.save(usuario));
+    }
+
+    public UsuarioResponse atualizarUsuario(Long id, AtualizarUsuarioRequest atualizarUsuarioRequest){
+
+        Usuario usuario = buscarUsuarioPorId(id);
+        usuario.setNome(normalizarTexto(atualizarUsuarioRequest.nome()));
+        usuario.setSenha(atualizarUsuarioRequest.senha());
+
+        return mapper.paraUsuarioResponse(repository.save(usuario));
+    }
+
+    @Transactional
+    public void deletarUsuarioPorId(Long id){
+        Usuario usuario = buscarUsuarioPorId(id);
+        repository.delete(usuario);
+    }
+
+    private Usuario buscarUsuarioPorId(Long id){
+        return  repository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Usuario não encontrado, verifique se o id está correto."));
+    }
+
+    private String normalizarTexto(String texto) {
+        String[] palavrasDoTexto = texto.trim().split("\\s+");
+        StringBuilder textoNormalizado = new StringBuilder();
+        for (String palavra : palavrasDoTexto) {
+            textoNormalizado.append(Character.toUpperCase(palavra.charAt(0)));
+            textoNormalizado.append(palavra.substring(1).toLowerCase());
+            textoNormalizado.append(" ");
+        }
+        return textoNormalizado.toString().trim();
+    }
+
+    private String normalizarEmail(String email) {
+        return email.toLowerCase().trim();
+    }
+}

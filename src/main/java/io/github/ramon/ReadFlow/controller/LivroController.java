@@ -1,10 +1,8 @@
 package io.github.ramon.ReadFlow.controller;
 
-import io.github.ramon.ReadFlow.business.dto.request.AtualizaLivroRequest;
-import io.github.ramon.ReadFlow.business.dto.request.AtualizaProgressoRequest;
-import io.github.ramon.ReadFlow.business.dto.request.AtualizaStatusRequest;
-import io.github.ramon.ReadFlow.business.dto.request.LivroRequest;
-import io.github.ramon.ReadFlow.business.dto.response.LivroResponse;
+import io.github.ramon.ReadFlow.business.dto.livro.request.AtualizaLivroRequest;
+import io.github.ramon.ReadFlow.business.dto.livro.request.LivroRequest;
+import io.github.ramon.ReadFlow.business.dto.livro.response.LivroResponse;
 import io.github.ramon.ReadFlow.business.service.LivroService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +29,7 @@ public class LivroController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LivroResponse> buscarLivroPorId( @PathVariable Long id) {
+    public ResponseEntity<LivroResponse> buscarLivroPorId(@PathVariable Long id) {
         return ResponseEntity.ok(service.buscarLivroPorId(id));
     }
 
@@ -41,7 +39,7 @@ public class LivroController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<LivroResponse> atualizarLivro(@PathVariable Long id, @Valid @RequestBody AtualizaLivroRequest livroRequest){
+    public ResponseEntity<LivroResponse> atualizarLivro(@PathVariable Long id, @Valid @RequestBody AtualizaLivroRequest livroRequest) {
         return ResponseEntity.ok(service.atualizarLivro(id, livroRequest));
     }
 

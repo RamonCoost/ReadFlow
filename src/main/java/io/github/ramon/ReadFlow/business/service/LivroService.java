@@ -1,9 +1,9 @@
 package io.github.ramon.ReadFlow.business.service;
 
-import io.github.ramon.ReadFlow.business.dto.request.AtualizaLivroRequest;
-import io.github.ramon.ReadFlow.business.dto.request.AtualizaProgressoRequest;
-import io.github.ramon.ReadFlow.business.dto.request.LivroRequest;
-import io.github.ramon.ReadFlow.business.dto.response.LivroResponse;
+import io.github.ramon.ReadFlow.business.dto.livro.request.AtualizaLivroRequest;
+import io.github.ramon.ReadFlow.business.dto.livro.request.AtualizaProgressoRequest;
+import io.github.ramon.ReadFlow.business.dto.livro.request.LivroRequest;
+import io.github.ramon.ReadFlow.business.dto.livro.response.LivroResponse;
 import io.github.ramon.ReadFlow.business.mapper.LivroMapper;
 import io.github.ramon.ReadFlow.infrastructure.entity.Livro;
 import io.github.ramon.ReadFlow.infrastructure.enums.Status;

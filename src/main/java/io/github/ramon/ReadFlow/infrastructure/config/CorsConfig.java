@@ -1,4 +1,4 @@
-package io.github.ramon.ReadFlow.infrastructure.configs;
+package io.github.ramon.ReadFlow.infrastructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

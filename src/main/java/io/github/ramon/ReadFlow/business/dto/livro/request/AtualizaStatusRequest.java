@@ -1,4 +1,4 @@
-package io.github.ramon.ReadFlow.business.dto.request;
+package io.github.ramon.ReadFlow.business.dto.livro.request;
 
 import io.github.ramon.ReadFlow.infrastructure.enums.Status;
 import jakarta.validation.constraints.NotNull;
