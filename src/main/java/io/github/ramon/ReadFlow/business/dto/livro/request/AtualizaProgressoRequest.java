@@ -1,4 +1,4 @@
-package io.github.ramon.ReadFlow.business.dto.request;
+package io.github.ramon.ReadFlow.business.dto.livro.request;
 
 import jakarta.validation.constraints.PositiveOrZero;
 
