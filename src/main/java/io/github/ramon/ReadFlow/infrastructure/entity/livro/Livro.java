@@ -1,5 +1,6 @@
-package io.github.ramon.ReadFlow.infrastructure.entity;
+package io.github.ramon.ReadFlow.infrastructure.entity.livro;
 
+import io.github.ramon.ReadFlow.infrastructure.entity.usuario.Usuario;
 import io.github.ramon.ReadFlow.infrastructure.enums.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,4 +30,8 @@ public class Livro {
     private int paginasLidas;
     @Column(name = "statusLeitura")
     private Status statusLeitura;
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
 }

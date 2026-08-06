@@ -1,6 +1,6 @@
-package io.github.ramon.ReadFlow.infrastructure.repository;
+package io.github.ramon.ReadFlow.infrastructure.repository.livro;
 
-import io.github.ramon.ReadFlow.infrastructure.entity.Livro;
+import io.github.ramon.ReadFlow.infrastructure.entity.livro.Livro;
 import io.github.ramon.ReadFlow.infrastructure.enums.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
