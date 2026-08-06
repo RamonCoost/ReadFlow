@@ -1,9 +1,9 @@
-package io.github.ramon.ReadFlow.controller;
+package io.github.ramon.ReadFlow.controller.livro;
 
 import io.github.ramon.ReadFlow.business.dto.livro.request.AtualizaLivroRequest;
 import io.github.ramon.ReadFlow.business.dto.livro.request.LivroRequest;
 import io.github.ramon.ReadFlow.business.dto.livro.response.LivroResponse;
-import io.github.ramon.ReadFlow.business.service.LivroService;
+import io.github.ramon.ReadFlow.business.service.livro.LivroService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +18,9 @@ public class LivroController {
 
     private final LivroService service;
 
-    @PostMapping
-    public ResponseEntity<LivroResponse> salvarLivro(@RequestBody @Valid LivroRequest livroRequest) {
-        return ResponseEntity.ok(service.salvarLivro(livroRequest));
+    @PostMapping("/usuario/{usuarioId}")
+    public ResponseEntity<LivroResponse> salvarLivro(@PathVariable Long usuarioId, @RequestBody @Valid LivroRequest livroRequest) {
+        return ResponseEntity.ok(service.salvarLivro(usuarioId,livroRequest));
     }
 
     @GetMapping

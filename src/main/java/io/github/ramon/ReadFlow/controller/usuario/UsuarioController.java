@@ -1,9 +1,9 @@
-package io.github.ramon.ReadFlow.controller;
+package io.github.ramon.ReadFlow.controller.usuario;
 
 import io.github.ramon.ReadFlow.business.dto.usuario.request.AtualizarUsuarioRequest;
 import io.github.ramon.ReadFlow.business.dto.usuario.request.CadastroUsuarioRequest;
 import io.github.ramon.ReadFlow.business.dto.usuario.response.UsuarioResponse;
-import io.github.ramon.ReadFlow.business.service.UsuarioService;
+import io.github.ramon.ReadFlow.business.service.usuario.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

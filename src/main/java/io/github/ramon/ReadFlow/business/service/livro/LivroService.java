@@ -1,15 +1,17 @@
-package io.github.ramon.ReadFlow.business.service;
+package io.github.ramon.ReadFlow.business.service.livro;
 
 import io.github.ramon.ReadFlow.business.dto.livro.request.AtualizaLivroRequest;
 import io.github.ramon.ReadFlow.business.dto.livro.request.AtualizaProgressoRequest;
 import io.github.ramon.ReadFlow.business.dto.livro.request.LivroRequest;
 import io.github.ramon.ReadFlow.business.dto.livro.response.LivroResponse;
-import io.github.ramon.ReadFlow.business.mapper.LivroMapper;
-import io.github.ramon.ReadFlow.infrastructure.entity.Livro;
+import io.github.ramon.ReadFlow.business.mapper.livro.LivroMapper;
+import io.github.ramon.ReadFlow.business.service.usuario.UsuarioService;
+import io.github.ramon.ReadFlow.infrastructure.entity.livro.Livro;
+import io.github.ramon.ReadFlow.infrastructure.entity.usuario.Usuario;
 import io.github.ramon.ReadFlow.infrastructure.enums.Status;
-import io.github.ramon.ReadFlow.infrastructure.exceptions.BadRequestException;
-import io.github.ramon.ReadFlow.infrastructure.exceptions.ResourceNotFoundException;
-import io.github.ramon.ReadFlow.infrastructure.repository.LivroRepository;
+import io.github.ramon.ReadFlow.infrastructure.exceptions.exception.BadRequestException;
+import io.github.ramon.ReadFlow.infrastructure.exceptions.exception.ResourceNotFoundException;
+import io.github.ramon.ReadFlow.infrastructure.repository.livro.LivroRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +23,11 @@ public class LivroService {
 
     private final LivroRepository repository;
     private final LivroMapper mapper;
+    private final UsuarioService usuarioService;
 
-    public LivroResponse salvarLivro(LivroRequest livroRequest) {
+    public LivroResponse salvarLivro(Long usuarioId, LivroRequest livroRequest) {
+
+        Usuario usuario =  usuarioService.buscarUsuarioPorId(usuarioId);
 
         if (livroRequest.paginasLidas() > livroRequest.totalPaginas()) {
             throw new BadRequestException("Páginas lidas não podem ser maiores que o total de páginas do livro.");
@@ -34,6 +39,7 @@ public class LivroService {
 
         Livro livro = mapper.paraLivro(livroRequest);
 
+        livro.setUsuario(usuario);
         livro.setTitulo(normalizarTexto(livro.getTitulo()));
         livro.setAutor(normalizarTexto(livro.getAutor()));
 

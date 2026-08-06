@@ -1,5 +1,6 @@
-package io.github.ramon.ReadFlow.infrastructure.entity;
+package io.github.ramon.ReadFlow.infrastructure.entity.usuario;
 
+import io.github.ramon.ReadFlow.infrastructure.entity.livro.Livro;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,15 +23,12 @@ public class Usuario {
 
     @Column(name = "nome", nullable = false)
     private String nome;
-
-
     @Column(name = "email", unique = true, nullable = false)
     private String email;
-
     @Column(name = "senha", nullable = false)
     private String senha;
 
-//    @OneToMany(mappedBy = "usuario")
-//    private List<Livro> livros;
+    @OneToMany(mappedBy = "usuario")
+    private List<Livro> livros;
 
 }

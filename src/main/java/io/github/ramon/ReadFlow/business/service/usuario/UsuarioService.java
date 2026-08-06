@@ -1,13 +1,13 @@
-package io.github.ramon.ReadFlow.business.service;
+package io.github.ramon.ReadFlow.business.service.usuario;
 
 import io.github.ramon.ReadFlow.business.dto.usuario.request.AtualizarUsuarioRequest;
 import io.github.ramon.ReadFlow.business.dto.usuario.request.CadastroUsuarioRequest;
 import io.github.ramon.ReadFlow.business.dto.usuario.response.UsuarioResponse;
-import io.github.ramon.ReadFlow.business.mapper.UsuarioMapper;
-import io.github.ramon.ReadFlow.infrastructure.entity.Usuario;
-import io.github.ramon.ReadFlow.infrastructure.exceptions.ConflictException;
-import io.github.ramon.ReadFlow.infrastructure.exceptions.ResourceNotFoundException;
-import io.github.ramon.ReadFlow.infrastructure.repository.UsuarioRepository;
+import io.github.ramon.ReadFlow.business.mapper.usuario.UsuarioMapper;
+import io.github.ramon.ReadFlow.infrastructure.entity.usuario.Usuario;
+import io.github.ramon.ReadFlow.infrastructure.exceptions.exception.ConflictException;
+import io.github.ramon.ReadFlow.infrastructure.exceptions.exception.ResourceNotFoundException;
+import io.github.ramon.ReadFlow.infrastructure.repository.usuario.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -47,7 +47,7 @@ public class UsuarioService {
         repository.delete(usuario);
     }
 
-    private Usuario buscarUsuarioPorId(Long id){
+    public Usuario buscarUsuarioPorId(Long id){
         return  repository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Usuario não encontrado, verifique se o id está correto."));
     }

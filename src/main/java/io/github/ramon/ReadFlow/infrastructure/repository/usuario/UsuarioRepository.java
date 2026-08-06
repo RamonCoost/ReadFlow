@@ -1,6 +1,6 @@
-package io.github.ramon.ReadFlow.infrastructure.repository;
+package io.github.ramon.ReadFlow.infrastructure.repository.usuario;
 
-import io.github.ramon.ReadFlow.infrastructure.entity.Usuario;
+import io.github.ramon.ReadFlow.infrastructure.entity.usuario.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

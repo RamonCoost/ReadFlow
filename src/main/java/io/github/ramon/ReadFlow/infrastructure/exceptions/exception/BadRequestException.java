@@ -1,4 +1,4 @@
-package io.github.ramon.ReadFlow.infrastructure.exceptions;
+package io.github.ramon.ReadFlow.infrastructure.exceptions.exception;
 
 public class BadRequestException extends RuntimeException {
 
