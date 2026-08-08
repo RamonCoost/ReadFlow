@@ -18,9 +18,9 @@ public class LivroController {
 
     private final LivroService service;
 
-    @PostMapping("/usuario/{usuarioId}")
-    public ResponseEntity<LivroResponse> salvarLivro(@PathVariable Long usuarioId, @RequestBody @Valid LivroRequest livroRequest) {
-        return ResponseEntity.ok(service.salvarLivro(usuarioId,livroRequest));
+    @PostMapping()
+    public ResponseEntity<LivroResponse> salvarLivro(@RequestBody @Valid LivroRequest livroRequest) {
+        return ResponseEntity.ok(service.salvarLivro(livroRequest));
     }
 
     @GetMapping
@@ -44,7 +44,7 @@ public class LivroController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<LivroResponse> excluirLivro(@PathVariable Long id) {
+    public ResponseEntity<Void> excluirLivro(@PathVariable Long id) {
         service.deletarLivro(id);
         return ResponseEntity.noContent().build();
     }

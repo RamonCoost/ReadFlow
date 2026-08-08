@@ -6,10 +6,12 @@ import io.github.ramon.ReadFlow.business.dto.usuario.response.UsuarioResponse;
 import io.github.ramon.ReadFlow.business.mapper.usuario.UsuarioMapper;
 import io.github.ramon.ReadFlow.infrastructure.entity.usuario.Usuario;
 import io.github.ramon.ReadFlow.infrastructure.exceptions.exception.ConflictException;
-import io.github.ramon.ReadFlow.infrastructure.exceptions.exception.ResourceNotFoundException;
 import io.github.ramon.ReadFlow.infrastructure.repository.usuario.UsuarioRepository;
+import io.github.ramon.ReadFlow.infrastructure.security.UsuarioDetails;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,6 +20,7 @@ public class UsuarioService {
 
     private final UsuarioRepository repository;
     private final UsuarioMapper mapper;
+    private final PasswordEncoder passwordEncoder;
 
     public UsuarioResponse salvarUsuario(CadastroUsuarioRequest cadastroUsuarioRequest) {
 
@@ -29,28 +32,26 @@ public class UsuarioService {
             throw new ConflictException("Esse email já esta cadastrado");
         }
 
+        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
+
         return mapper.paraUsuarioResponse(repository.save(usuario));
     }
 
-    public UsuarioResponse atualizarUsuario(Long id, AtualizarUsuarioRequest atualizarUsuarioRequest){
+    public UsuarioResponse atualizarUsuario(AtualizarUsuarioRequest atualizarUsuarioRequest) {
 
-        Usuario usuario = buscarUsuarioPorId(id);
+        Usuario usuario = buscarUsuarioAutenticado();
         usuario.setNome(normalizarTexto(atualizarUsuarioRequest.nome()));
-        usuario.setSenha(atualizarUsuarioRequest.senha());
+        usuario.setSenha(passwordEncoder.encode(atualizarUsuarioRequest.senha()));
 
         return mapper.paraUsuarioResponse(repository.save(usuario));
     }
 
     @Transactional
-    public void deletarUsuarioPorId(Long id){
-        Usuario usuario = buscarUsuarioPorId(id);
+    public void deletarUsuario() {
+        Usuario usuario = buscarUsuarioAutenticado();
         repository.delete(usuario);
     }
 
-    public Usuario buscarUsuarioPorId(Long id){
-        return  repository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Usuario não encontrado, verifique se o id está correto."));
-    }
 
     private String normalizarTexto(String texto) {
         String[] palavrasDoTexto = texto.trim().split("\\s+");
@@ -65,5 +66,16 @@ public class UsuarioService {
 
     private String normalizarEmail(String email) {
         return email.toLowerCase().trim();
+    }
+
+    private Usuario buscarUsuarioAutenticado() {
+
+        UsuarioDetails usuarioDetails =
+                (UsuarioDetails) SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+                        .getPrincipal();
+
+        return usuarioDetails.getUsuario();
     }
 }
