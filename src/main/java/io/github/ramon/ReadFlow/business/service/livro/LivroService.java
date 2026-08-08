@@ -5,14 +5,15 @@ import io.github.ramon.ReadFlow.business.dto.livro.request.AtualizaProgressoRequ
 import io.github.ramon.ReadFlow.business.dto.livro.request.LivroRequest;
 import io.github.ramon.ReadFlow.business.dto.livro.response.LivroResponse;
 import io.github.ramon.ReadFlow.business.mapper.livro.LivroMapper;
-import io.github.ramon.ReadFlow.business.service.usuario.UsuarioService;
 import io.github.ramon.ReadFlow.infrastructure.entity.livro.Livro;
 import io.github.ramon.ReadFlow.infrastructure.entity.usuario.Usuario;
 import io.github.ramon.ReadFlow.infrastructure.enums.Status;
 import io.github.ramon.ReadFlow.infrastructure.exceptions.exception.BadRequestException;
 import io.github.ramon.ReadFlow.infrastructure.exceptions.exception.ResourceNotFoundException;
 import io.github.ramon.ReadFlow.infrastructure.repository.livro.LivroRepository;
+import io.github.ramon.ReadFlow.infrastructure.security.UsuarioDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,11 +24,10 @@ public class LivroService {
 
     private final LivroRepository repository;
     private final LivroMapper mapper;
-    private final UsuarioService usuarioService;
 
-    public LivroResponse salvarLivro(Long usuarioId, LivroRequest livroRequest) {
+    public LivroResponse salvarLivro(LivroRequest livroRequest) {
 
-        Usuario usuario =  usuarioService.buscarUsuarioPorId(usuarioId);
+        Usuario usuario = buscarUsuarioAutenticado();
 
         if (livroRequest.paginasLidas() > livroRequest.totalPaginas()) {
             throw new BadRequestException("Páginas lidas não podem ser maiores que o total de páginas do livro.");
@@ -50,21 +50,24 @@ public class LivroService {
     }
 
     public List<LivroResponse> listarLivros() {
-        return mapper.paraLivroResponseList(repository.findAll());
+        Usuario usuario = buscarUsuarioAutenticado();
+        return mapper.paraLivroResponseList(repository.findByUsuario(usuario));
     }
 
-
     public LivroResponse buscarLivroPorId(Long id) {
-        return mapper.paraLivroResponse(buscarLivroEntityPorId(id)
-        );
+        Usuario usuario = buscarUsuarioAutenticado();
+        return mapper.paraLivroResponse(buscarLivroEntityPorId(id, usuario));
     }
 
     public List<LivroResponse> buscarLivroPorAutor(String autor) {
-        return mapper.paraLivroResponseList(repository.findByAutorContainingIgnoreCase(autor));
+        Usuario usuario = buscarUsuarioAutenticado();
+        return mapper.paraLivroResponseList(repository.findByAutorContainingIgnoreCaseAndUsuario(autor, usuario));
     }
 
     public LivroResponse atualizarLivro(long id, AtualizaLivroRequest atualizaLivroRequest) {
-        Livro livro = buscarLivroEntityPorId(id);
+        Usuario usuario = buscarUsuarioAutenticado();
+
+        Livro livro = buscarLivroEntityPorId(id, usuario);
 
         if (atualizaLivroRequest.paginasLidas() > atualizaLivroRequest.totalPaginas()) {
             throw new BadRequestException("Páginas lidas não podem ser maiores que o total de páginas do livro.");
@@ -90,7 +93,10 @@ public class LivroService {
     }
 
     public LivroResponse atualizarProgressoLeitura(long id, AtualizaProgressoRequest atualizaRequest) {
-        Livro livro = buscarLivroEntityPorId(id);
+
+        Usuario usuario = buscarUsuarioAutenticado();
+
+        Livro livro = buscarLivroEntityPorId(id, usuario);
 
         if (atualizaRequest.paginasLidas() > livro.getTotalPaginas()) {
             throw new BadRequestException("Páginas lidas não podem ser maiores que o total de páginas do livro.");
@@ -107,7 +113,9 @@ public class LivroService {
     }
 
     public LivroResponse atualizarStatus(long id, Status status) {
-        Livro livro = buscarLivroEntityPorId(id);
+        Usuario usuario = buscarUsuarioAutenticado();
+
+        Livro livro = buscarLivroEntityPorId(id, usuario);
         livro.setStatusLeitura(status);
         return mapper.paraLivroResponse(
                 repository.save(livro));
@@ -115,12 +123,13 @@ public class LivroService {
     }
 
     public void deletarLivro(Long id) {
-        repository.delete(buscarLivroEntityPorId(id));
+        Usuario usuario = buscarUsuarioAutenticado();
+        repository.delete(buscarLivroEntityPorId(id, usuario));
     }
 
 
-    private Livro buscarLivroEntityPorId(Long id) {
-        return repository.findById(id).orElseThrow(
+    private Livro buscarLivroEntityPorId(Long id, Usuario usuario) {
+        return repository.findByIdAndUsuario(id, usuario).orElseThrow(
                 () -> new ResourceNotFoundException("Livro não encontrado, verifique o id do livro."));
     }
 
@@ -145,6 +154,17 @@ public class LivroService {
             textoNormalizado.append(" ");
         }
         return textoNormalizado.toString().trim();
+    }
+
+    private Usuario buscarUsuarioAutenticado() {
+
+        UsuarioDetails usuarioDetails =
+                (UsuarioDetails) SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+                        .getPrincipal();
+
+        return usuarioDetails.getUsuario();
     }
 
 }
