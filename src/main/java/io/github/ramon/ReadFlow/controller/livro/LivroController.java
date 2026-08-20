@@ -4,6 +4,7 @@ import io.github.ramon.ReadFlow.business.dto.livro.request.AtualizaLivroRequest;
 import io.github.ramon.ReadFlow.business.dto.livro.request.LivroRequest;
 import io.github.ramon.ReadFlow.business.dto.livro.response.LivroResponse;
 import io.github.ramon.ReadFlow.business.service.livro.LivroService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/livros")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearer-key")
 public class LivroController {
 
     private final LivroService service;
