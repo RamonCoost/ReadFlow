@@ -13,6 +13,9 @@ import io.github.ramon.ReadFlow.infrastructure.exceptions.exception.ResourceNotF
 import io.github.ramon.ReadFlow.infrastructure.repository.livro.LivroRepository;
 import io.github.ramon.ReadFlow.infrastructure.security.UsuarioDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.data.autoconfigure.web.DataWebProperties;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -49,9 +52,13 @@ public class LivroService {
         return mapper.paraLivroResponse(repository.save(livro));
     }
 
-    public List<LivroResponse> listarLivros() {
+    public Page<LivroResponse> listarLivros(Pageable pageable){
         Usuario usuario = buscarUsuarioAutenticado();
-        return mapper.paraLivroResponseList(repository.findByUsuario(usuario));
+        Page<Livro> resultado = repository.findByUsuario(usuario, pageable);
+        Page<LivroResponse> resposta = resultado.map(
+                livro -> mapper.paraLivroResponse(livro)
+        );
+        return resposta;
     }
 
     public LivroResponse buscarLivroPorId(Long id) {
