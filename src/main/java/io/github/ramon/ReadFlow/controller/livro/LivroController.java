@@ -7,6 +7,8 @@ import io.github.ramon.ReadFlow.business.service.livro.LivroService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,8 +28,8 @@ public class LivroController {
     }
 
     @GetMapping
-    public ResponseEntity<List<LivroResponse>> listarLivros() {
-        return ResponseEntity.ok(service.listarLivros());
+    public ResponseEntity<Page<LivroResponse>> listarLivros(Pageable pageable) {
+        return ResponseEntity.ok(service.listarLivros(pageable));
     }
 
     @GetMapping("/{id}")
