@@ -51,15 +51,17 @@ public class LivroService {
         return mapper.paraLivroResponse(repository.save(livro));
     }
 
-    public Page<LivroResponse> listarLivros(Pageable pageable, Status status) {
+    public Page<LivroResponse> listarLivros(Pageable pageable, Status status, String pesquisa) {
         Usuario usuario = buscarUsuarioAutenticado();
         Page<Livro> resultado;
 
-        if (status != null) {
-            resultado = repository.findByUsuarioAndStatusLeitura(usuario, status, pageable);
-        } else {
-            resultado = repository.findByUsuario(usuario, pageable);
-        }
+        if (pesquisa != null && !pesquisa.isBlank()){
+            resultado = repository.findTituloOrAutor(usuario,pesquisa,status,pageable);
+        } else if (status != null) {
+                resultado = repository.findByUsuarioAndStatusLeitura(usuario, status, pageable);
+            } else {
+                resultado = repository.findByUsuario(usuario, pageable);
+            }
 
         Page<LivroResponse> resposta = resultado.map(
                 livro -> mapper.paraLivroResponse(livro)

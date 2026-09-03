@@ -8,7 +8,6 @@ import io.github.ramon.ReadFlow.infrastructure.enums.Status;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.lang.annotation.RequiredTypes;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +29,9 @@ public class LivroController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<LivroResponse>> listarLivros(Pageable pageable, @RequestParam(required = false) Status status ) {
-        return ResponseEntity.ok(service.listarLivros(pageable,status));
+    public ResponseEntity<Page<LivroResponse>> listarLivros(Pageable pageable, @RequestParam(required = false)
+                                                            Status status, @RequestParam(required = false) String pesquisa) {
+        return ResponseEntity.ok(service.listarLivros(pageable, status, pesquisa));
     }
 
     @GetMapping("/{id}")
