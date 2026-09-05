@@ -4,6 +4,7 @@ import io.github.ramon.ReadFlow.business.dto.livro.request.AtualizaLivroRequest;
 import io.github.ramon.ReadFlow.business.dto.livro.request.LivroRequest;
 import io.github.ramon.ReadFlow.business.dto.livro.response.LivroResponse;
 import io.github.ramon.ReadFlow.business.service.livro.LivroService;
+import io.github.ramon.ReadFlow.infrastructure.enums.Status;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +29,9 @@ public class LivroController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<LivroResponse>> listarLivros(Pageable pageable) {
-        return ResponseEntity.ok(service.listarLivros(pageable));
+    public ResponseEntity<Page<LivroResponse>> listarLivros(Pageable pageable, @RequestParam(required = false)
+                                                            Status status, @RequestParam(required = false) String pesquisa) {
+        return ResponseEntity.ok(service.listarLivros(pageable, status, pesquisa));
     }
 
     @GetMapping("/{id}")
