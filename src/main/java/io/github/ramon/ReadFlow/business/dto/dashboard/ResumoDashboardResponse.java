@@ -1,4 +1,9 @@
 package io.github.ramon.ReadFlow.business.dto.dashboard;
 
-public record ResumoDashboardResponse() {
+import io.github.ramon.ReadFlow.infrastructure.enums.Status;
+
+import java.util.Map;
+
+public record ResumoDashboardResponse(Long totalLivros,
+                                      Map<Status, Long> totalLivroPorStatus) {
 }

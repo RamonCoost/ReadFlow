@@ -44,4 +44,8 @@ public interface LivroRepository extends JpaRepository<Livro, Long> {
     Page<Livro> findByUsuario(Usuario usuario, Pageable pageable);
 
     Optional<Livro> findByIdAndUsuario(Long id, Usuario usuario);
+
+    long countByUsuario(Usuario usuario);
+
+    Long countByUsuarioAndStatusLeitura(Usuario usuario, Status statusLeitura);
 }
