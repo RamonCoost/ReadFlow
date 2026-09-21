@@ -24,6 +24,8 @@ public class Livro {
     private String titulo;
     @Column(name = "autor")
     private String autor;
+    @Column(name = "capa")
+    private String capa;
     @Column(name = "totalPaginas")
     private int totalPaginas;
     @Column(name = "paginasLidas")

@@ -11,6 +11,8 @@ public record LivroRequest(@NotBlank
                            @NotBlank
                            String autor,
 
+                           String capa,
+
                            @Positive
                            int totalPaginas,
 
