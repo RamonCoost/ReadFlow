@@ -8,6 +8,8 @@ public record LivroResponse(Long id,
 
                             String autor,
 
+                            String capa,
+
                             int totalPaginas,
 
                             int paginasLidas,
