@@ -1,5 +1,6 @@
 package io.github.ramon.ReadFlow.business.service.livro;
 
+import io.github.ramon.ReadFlow.business.dto.dashboard.ResumoDashboardResponse;
 import io.github.ramon.ReadFlow.business.dto.livro.request.AtualizaLivroRequest;
 import io.github.ramon.ReadFlow.business.dto.livro.request.AtualizaProgressoRequest;
 import io.github.ramon.ReadFlow.business.dto.livro.request.LivroRequest;
@@ -18,7 +19,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -55,18 +58,29 @@ public class LivroService {
         Usuario usuario = buscarUsuarioAutenticado();
         Page<Livro> resultado;
 
-        if (pesquisa != null && !pesquisa.isBlank()){
-            resultado = repository.findTituloOrAutor(usuario,pesquisa,status,pageable);
+        if (pesquisa != null && !pesquisa.isBlank()) {
+            resultado = repository.findTituloOrAutor(usuario, pesquisa, status, pageable);
         } else if (status != null) {
-                resultado = repository.findByUsuarioAndStatusLeitura(usuario, status, pageable);
-            } else {
-                resultado = repository.findByUsuario(usuario, pageable);
-            }
+            resultado = repository.findByUsuarioAndStatusLeitura(usuario, status, pageable);
+        } else {
+            resultado = repository.findByUsuario(usuario, pageable);
+        }
 
         Page<LivroResponse> resposta = resultado.map(
                 livro -> mapper.paraLivroResponse(livro)
         );
         return resposta;
+    }
+
+    public ResumoDashboardResponse buscarResumo() {
+        Usuario usuario = buscarUsuarioAutenticado();
+        Long totalUsuario = repository.countByUsuario(usuario);
+        Map<Status, Long> totalLivroPorStatus = new EnumMap<>(Status.class);
+        for (Status status : Status.values()) {
+            Long qtdStatus = repository.countByUsuarioAndStatusLeitura(usuario, status);
+            totalLivroPorStatus.put(status, qtdStatus);
+        }
+        return new ResumoDashboardResponse(totalUsuario, totalLivroPorStatus);
     }
 
 
