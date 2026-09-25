@@ -4,15 +4,18 @@ import io.github.ramon.ReadFlow.business.dto.usuario.request.AtualizarUsuarioReq
 import io.github.ramon.ReadFlow.business.dto.usuario.request.CadastroUsuarioRequest;
 import io.github.ramon.ReadFlow.business.dto.usuario.response.UsuarioResponse;
 import io.github.ramon.ReadFlow.business.mapper.usuario.UsuarioMapper;
+import io.github.ramon.ReadFlow.business.service.email.EmailService;
+import io.github.ramon.ReadFlow.business.service.token.TokenEmailService;
+import io.github.ramon.ReadFlow.infrastructure.entity.token.TokenEmailConfirmacao;
 import io.github.ramon.ReadFlow.infrastructure.entity.usuario.Usuario;
 import io.github.ramon.ReadFlow.infrastructure.exceptions.exception.ConflictException;
 import io.github.ramon.ReadFlow.infrastructure.repository.usuario.UsuarioRepository;
 import io.github.ramon.ReadFlow.infrastructure.security.UsuarioDetails;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +24,10 @@ public class UsuarioService {
     private final UsuarioRepository repository;
     private final UsuarioMapper mapper;
     private final PasswordEncoder passwordEncoder;
+    private final TokenEmailService tokenEmailService;
+    private final EmailService emailService;
 
+    @Transactional
     public UsuarioResponse salvarUsuario(CadastroUsuarioRequest cadastroUsuarioRequest) {
 
         Usuario usuario = mapper.paraUsuario(cadastroUsuarioRequest);
@@ -34,7 +40,12 @@ public class UsuarioService {
 
         usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
 
-        return mapper.paraUsuarioResponse(repository.save(usuario));
+        Usuario usuarioSalvo = repository.save(usuario);
+        TokenEmailConfirmacao tokenEmail = tokenEmailService.criarToken(usuarioSalvo);
+
+        emailService.enviarEmailConfirmacao(tokenEmail);
+
+        return mapper.paraUsuarioResponse(usuarioSalvo);
     }
 
     public UsuarioResponse atualizarUsuario(AtualizarUsuarioRequest atualizarUsuarioRequest) {
@@ -51,6 +62,7 @@ public class UsuarioService {
         Usuario usuario = buscarUsuarioAutenticado();
         repository.delete(usuario);
     }
+
 
 
     private String normalizarTexto(String texto) {

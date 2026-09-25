@@ -27,6 +27,8 @@ public class Usuario {
     private String email;
     @Column(name = "senha", nullable = false)
     private String senha;
+    @Column(name = "email_confirmado", nullable = false)
+    private boolean emailConfirmado;
 
     @OneToMany(mappedBy = "usuario")
     private List<Livro> livros;
