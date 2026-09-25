@@ -48,6 +48,13 @@ public class UsuarioService {
         return mapper.paraUsuarioResponse(usuarioSalvo);
     }
 
+    @Transactional
+    public void confirmarEmail(String token){
+     Usuario usuario =  tokenEmailService.confirmarEmail(token);
+     usuario.setEmailConfirmado(true);
+     repository.save(usuario);
+    }
+
     public UsuarioResponse atualizarUsuario(AtualizarUsuarioRequest atualizarUsuarioRequest) {
 
         Usuario usuario = buscarUsuarioAutenticado();
