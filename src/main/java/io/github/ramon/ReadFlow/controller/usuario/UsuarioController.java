@@ -26,6 +26,12 @@ public class UsuarioController {
         return ResponseEntity.ok(service.atualizarUsuario(atualizarUsuarioRequest));
     }
 
+    @PatchMapping("/email")
+    public ResponseEntity<Void> confirmarEmail(@RequestParam String token){
+        service.confirmarEmail(token);
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping()
     public ResponseEntity<Void> deletarUsuario() {
         service.deletarUsuario();
