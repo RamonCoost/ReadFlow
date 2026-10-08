@@ -9,6 +9,7 @@ import io.github.ramon.ReadFlow.business.service.token.TokenEmailService;
 import io.github.ramon.ReadFlow.infrastructure.entity.token.TokenEmailConfirmacao;
 import io.github.ramon.ReadFlow.infrastructure.entity.usuario.Usuario;
 import io.github.ramon.ReadFlow.infrastructure.exceptions.exception.ConflictException;
+import io.github.ramon.ReadFlow.infrastructure.exceptions.exception.ResourceNotFoundException;
 import io.github.ramon.ReadFlow.infrastructure.repository.usuario.UsuarioRepository;
 import io.github.ramon.ReadFlow.infrastructure.security.UsuarioDetails;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -49,10 +52,24 @@ public class UsuarioService {
     }
 
     @Transactional
-    public void confirmarEmail(String token){
-     Usuario usuario =  tokenEmailService.confirmarEmail(token);
-     usuario.setEmailConfirmado(true);
-     repository.save(usuario);
+    public void confirmarEmail(String token) {
+        Usuario usuario = tokenEmailService.confirmarEmail(token);
+        usuario.setEmailConfirmado(true);
+        repository.save(usuario);
+    }
+
+    @Transactional
+    public void reenviarEmail(String email) {
+
+        String emailNormalizado = normalizarEmail(email);
+        Optional<Usuario> usuario = repository.findByEmail(emailNormalizado);
+        usuario.ifPresent( user->{
+            if (!user.isEmailConfirmado()){
+                TokenEmailConfirmacao token = tokenEmailService.recriarToken(user);
+                emailService.enviarEmailConfirmacao(token);
+            }
+
+        });
     }
 
     public UsuarioResponse atualizarUsuario(AtualizarUsuarioRequest atualizarUsuarioRequest) {
@@ -69,7 +86,6 @@ public class UsuarioService {
         Usuario usuario = buscarUsuarioAutenticado();
         repository.delete(usuario);
     }
-
 
 
     private String normalizarTexto(String texto) {
