@@ -17,9 +17,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TokenEmailService {
 
-    private final TokenRepository repository;
+    private final TokenRepository tokenRepository;
 
-    public TokenEmailConfirmacao criarToken(Usuario usuario){
+    public TokenEmailConfirmacao criarToken(Usuario usuario) {
         TokenEmailConfirmacao tokenEmailConfirmacao = new TokenEmailConfirmacao();
         String token = UUID.randomUUID().toString();
         LocalDateTime tokenCriado = LocalDateTime.now();
@@ -30,21 +30,35 @@ public class TokenEmailService {
         tokenEmailConfirmacao.setTokenExpirado(tokenExpirado);
         tokenEmailConfirmacao.setUsuario(usuario);
 
-        return repository.save(tokenEmailConfirmacao);
+        return tokenRepository.save(tokenEmailConfirmacao);
     }
 
     @Transactional
-    public Usuario confirmarEmail(String token){
+    public Usuario confirmarEmail(String token) {
         TokenEmailConfirmacao confirmacaoEmail =
-                repository.findByToken(token)
+                tokenRepository.findByToken(token)
                         .orElseThrow(() -> new ResourceNotFoundException("token de confirmação não encontrado"));
 
-        if(confirmacaoEmail.getTokenExpirado().isBefore(LocalDateTime.now())){
+        if (confirmacaoEmail.getTokenExpirado().isBefore(LocalDateTime.now())) {
             throw new BadRequestException("token expirado");
         }
 
         Usuario usuario = confirmacaoEmail.getUsuario();
-        repository.delete(confirmacaoEmail);
+        tokenRepository.delete(confirmacaoEmail);
         return usuario;
+    }
+
+    @Transactional
+    public TokenEmailConfirmacao recriarToken(Usuario usuario) {
+        Optional<TokenEmailConfirmacao> token = tokenRepository.findByUsuario(usuario);
+
+        token.ifPresent(emailConfirmacao -> {
+            tokenRepository.delete(emailConfirmacao);
+            tokenRepository.flush();
+        });
+
+        TokenEmailConfirmacao novoToken = criarToken(usuario);
+
+        return novoToken;
     }
 }

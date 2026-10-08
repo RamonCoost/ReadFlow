@@ -21,13 +21,19 @@ public class UsuarioController {
         return ResponseEntity.ok(service.salvarUsuario(cadastroUsuarioRequest));
     }
 
+    @PostMapping("/reenviar-email")
+    public ResponseEntity<Void> reenviarEmail(@RequestParam String email) {
+        service.reenviarEmail(email);
+        return ResponseEntity.noContent().build();
+    }
+
     @PutMapping()
     public ResponseEntity<UsuarioResponse> atualizarUsuario(@RequestBody @Valid AtualizarUsuarioRequest atualizarUsuarioRequest) {
         return ResponseEntity.ok(service.atualizarUsuario(atualizarUsuarioRequest));
     }
 
     @PatchMapping("/email")
-    public ResponseEntity<Void> confirmarEmail(@RequestParam String token){
+    public ResponseEntity<Void> confirmarEmail(@RequestParam String token) {
         service.confirmarEmail(token);
         return ResponseEntity.noContent().build();
     }
