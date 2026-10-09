@@ -20,7 +20,7 @@ public class GoogleBooksClient {
         GoogleBooksResponse resposta = restClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/volumes")
-                        .queryParam("q", "intitle:" + termo)
+                        .queryParam("q", termo)
                         .queryParam("key", keyApi)
                         .build())
                 .retrieve()
