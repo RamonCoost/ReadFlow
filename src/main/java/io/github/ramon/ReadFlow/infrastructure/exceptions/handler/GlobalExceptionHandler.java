@@ -6,6 +6,7 @@ import io.github.ramon.ReadFlow.infrastructure.exceptions.exception.ResourceNotF
 import io.github.ramon.ReadFlow.infrastructure.exceptions.response.ErrorResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -58,6 +59,18 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(errorResponse.status()).body(errorResponse);
     }
+
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<ErrorResponse> disabledException() {
+        ErrorResponse errorResponse = new ErrorResponse(
+                401,
+                "Unauthorized",
+                "Não foi possível autenticar esta conta. Verifique seus dados e a confirmação do e-mail.",
+                LocalDateTime.now());
+
+        return ResponseEntity.status(errorResponse.status()).body(errorResponse);
+    }
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> argumentNotValid() {
