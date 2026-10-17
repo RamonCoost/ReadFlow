@@ -6,6 +6,7 @@ import io.github.ramon.ReadFlow.infrastructure.client.GoogleBooksClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -23,6 +24,8 @@ public class PesquisaLivroService {
 
         return resposta.items().stream()
                 .map(item -> item.volumeInfo())
+                .sorted(Comparator.comparingInt(volumeInfo -> termo.equalsIgnoreCase(volumeInfo.title()) ? 0 :
+                        volumeInfo.title().toLowerCase().contains(termo.toLowerCase())? 1 : 2))
                 .map(volumeInfo ->  new PesquisaLivroResponse(
                         volumeInfo.title(),
                         volumeInfo.authors(),
