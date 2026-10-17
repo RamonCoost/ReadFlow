@@ -32,4 +32,9 @@ public class UsuarioDetails implements UserDetails {
     public Usuario getUsuario() {
         return usuario;
     }
+
+    @Override
+    public boolean isEnabled() {
+        return usuario.isEmailConfirmado();
+    }
 }
